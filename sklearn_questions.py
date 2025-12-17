@@ -112,6 +112,7 @@ class KNearestNeighbors(ClassifierMixin, BaseEstimator):
 
     def predict(self, X):
         """Predict class labels for the given samples.
+
         Parameters
         ----------
         X : ndarray, shape (n_samples, n_features)
