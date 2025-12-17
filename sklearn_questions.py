@@ -105,7 +105,6 @@ class KNearestNeighbors(ClassifierMixin, BaseEstimator):
                 f"but n_samples = {X.shape[0]} and "
                 f"n_neighbors = {self.n_neighbors}"
             )
-        
         self.coord_ = X
         self.label_ = y
         self.classes_ = np.unique(y)
@@ -120,7 +119,7 @@ class KNearestNeighbors(ClassifierMixin, BaseEstimator):
 
         y_pred = np.empty(dist.shape[0], dtype=self.label_.dtype)
 
-        for i in range(dist.shape[0]): 
+        for i in range(dist.shape[0]):
             nn_idx = np.argsort(dist[i])[: self.n_neighbors]
 
             nn_labels = self.label_[nn_idx]
@@ -129,7 +128,6 @@ class KNearestNeighbors(ClassifierMixin, BaseEstimator):
             y_pred[i] = values[np.argmax(counts)]
 
         return y_pred
-
 
     def score(self, X, y):
         """Calculate the score of the prediction.
@@ -146,13 +144,12 @@ class KNearestNeighbors(ClassifierMixin, BaseEstimator):
         score : float
             Accuracy of the model computed for the (X, y) pairs.
         """
-        check_is_fitted(self,attributes=["coord_", "label_"])
-        
+        check_is_fitted(self, attributes=["coord_", "label_"])
         X, y = validate_data(
             self,
             X,
             y,
-            reset = False
+            reset=False
         )
         print(X)
         print(y)
@@ -197,19 +194,16 @@ class MonthlySplit(BaseCrossValidator):
         n_splits : int
             The number of splits.
         """
-        if self.time_col =="index" : 
+        if self.time_col == "index":
             date = X.index
-        else : 
+        else:
             date = X[self.time_col]
-        
-        if not pd.api.types.is_datetime64_any_dtype(date) : 
+        if not pd.api.types.is_datetime64_any_dtype(date):
             raise ValueError("The column is not of type datetime")
-        
         if isinstance(date, pd.Index):
             periods = date.to_period("M")
         else:
             periods = date.dt.to_period("M")
-        
         n_splits = len(periods.unique())
 
         # X.index = pd.to_datetime(X.index)
@@ -217,9 +211,10 @@ class MonthlySplit(BaseCrossValidator):
         # X["year"] = X.index.year
         # X["month"] = X.index.month
 
-        # X["year-month"] = (X["year"].astype(str) + "-" + X["month"].astype(str).str.zfill(2))
+        # X["year-month"] = (X["year"].astype(str) +
+        #   "-" + X["month"].astype(str).str.zfill(2))
         # n_splits = X[["year-month"]].nunique().values[0]
-        return max(0,int(n_splits)-1)
+        return max(0, int(n_splits)-1)
 
     def split(self, X, y, groups=None):
         """Generate indices to split data into training and test set.
@@ -241,19 +236,16 @@ class MonthlySplit(BaseCrossValidator):
         idx_test : ndarray
             The testing set indices for that split.
         """
-        if self.time_col =="index" : 
+        if self.time_col == "index":
             date = X.index
-        else : 
+        else:
             date = X[self.time_col]
-        
-        if not pd.api.types.is_datetime64_any_dtype(date) : 
+        if not pd.api.types.is_datetime64_any_dtype(date):
             raise ValueError("The column is not of type datetime")
-        
         if isinstance(date, pd.Index):
             periods = date.to_period("M")
         else:
             periods = date.dt.to_period("M")
-        
         n_splits = len(periods.unique())-1
         unique_period = sorted(periods.unique())
         n_samples = X.shape[0]
