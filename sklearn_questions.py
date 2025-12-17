@@ -111,17 +111,23 @@ class KNearestNeighbors(ClassifierMixin, BaseEstimator):
         return self
 
     def predict(self, X):
+        """Predict class labels for the given samples.
+        Parameters
+        ----------
+        X : ndarray, shape (n_samples, n_features)
+            Input data for which to predict class labels.
+
+        Returns
+        -------
+        y_pred : ndarray, shape (n_samples,)
+            Predicted class labels.
+        """
         check_is_fitted(self, attributes=["coord_", "label_"])
-
         X = validate_data(self, X, reset=False)
-
         dist = pairwise_distances(X, self.coord_, metric="euclidean")
-
         y_pred = np.empty(dist.shape[0], dtype=self.label_.dtype)
-
         for i in range(dist.shape[0]):
             nn_idx = np.argsort(dist[i])[: self.n_neighbors]
-
             nn_labels = self.label_[nn_idx]
 
             values, counts = np.unique(nn_labels, return_counts=True)
